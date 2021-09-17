@@ -1,0 +1,31 @@
+[
+    {
+        "Label": "Some high school",
+        "Freq": 315	
+    },
+    {
+        "Label" : "High school graduate",
+        "Freq": 1294
+    },
+    {
+        "Label" : "Some college",
+        "Freq": 2558
+    },
+    {
+        "Label" : "Vacational training (like bootcamp)",
+        "Freq": 44
+    },
+    {
+        "Label" : "College graduate",
+        "Freq" : 12020
+    },
+    {
+        "Label" : "Some post graduate work (Masters, PhD)",
+        "Freq" : 2493
+    },
+    {
+        "Label" : "Post graduate degree (Masters, PhD)",
+        "Freq" : 6032
+    }
+    ]
+    

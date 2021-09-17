@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="http://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script src="https://d3js.org/d3.v4.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+  <title>Hacker Women</title>
+
+  <style>
+    .malebar {
+      fill: rgb(171, 206, 235);
+    }
+
+    .malebar:hover {
+      fill: brown;
+    }
+
+    .axis {
+      font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .femalebar {
+      fill: rgb(241, 153, 153);
+    }
+
+    .femalebar:hover {
+      fill: brown;
+    }
+
+    .nonbbar {
+      fill: rgb(138, 247, 183);
+    }
+
+    .nonbbar:hover {
+      fill: brown;
+    }
+
+    .bar {
+      fill: #b77ac5;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #D4D8DA;
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+    }
+
+    .x path {
+      display: none;
+    }
+
+    .toolTip {
+      position: absolute;
+      display: none;
+      min-width: 80px;
+      height: auto;
+      background: none repeat scroll 0 0 #ffffff;
+      border: 1px solid #6F257F;
+      padding: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="page_title">
+      <h1>Hacker Women in Tech <span>data visualization</span></h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <p id="introduction">Here are some charts that represent women hackers data compared to men hackers.</p>
+  </div>
+
+  <div class="container">
+    <div class="row" id="buttons">
+      <button type="button" id="btn" class="btn btn-info" onclick="window.location.href='index.html'">Go Back To The
+        Map</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" id="btn">Choose theme</button>
+      <div class="dropdown-content">
+        <a href="#" id="chart1" onClick="myClick()">Male vs. Female in Numbers</a>
+        <a href="#" id="chart2" onClick="myClick1()">Age Comparison</a>
+        <a href="#" id="chart3" onClick="myClickLink3()">Education</a>
+        <a href="#" id="chart3" onClick="myClickLink4()">Current Jobs</a>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container" id="chart1a">
+    <h1 class="info_title">Male, female and non-binary hacker in percentage</h1>
+  </div>
+
+  <div class="container" id="chartsage">
+    <div class="row">
+      <div class="col-lg-4" id="chart2a">
+        <h1 class="info_title">Male hackers-age</h1>
+      </div>
+      <div class="col-lg-4" id="chart3a">
+        <h1 class="info_title">Female hackers-age</h1>
+      </div>
+      <div class="col-lg-4" id="chart4a">
+        <h1 class="info_title">Non-binary hackers-age</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="chartsedu">
+    <div class="row">
+      <div class="col-lg-4" id="chartMedu">
+        <h1 class="info_title">Male hackers-education</h1>
+      </div>
+      <div class="col-lg-4" id="chartFedu">
+        <h1 class="info_title">Female hackers-education</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="chartsjob">
+    <div class="column">
+      <div class="row-lg-4" id="chartMjob">
+        <h1 class="info_title">Male hackers-job</h1>
+      </div>
+      <div class="row-lg-4" id="chartFjob">
+        <h1 class="info_title">Female hackers-job</h1>
+      </div>
+    </div>
+  </div>
+
+
+  <footer>
+    <a href="#" id="link"></a>
+  </footer>
+
+  <script>
+
+    // MALE VS. FEMALE VS. NB IN NUMBERS
+    document.getElementById('chart1a').style.display = 'none';
+    document.getElementById('chartsage').style.display = 'none';
+    document.getElementById('chartsedu').style.display = 'none';
+    document.getElementById('chartsjob').style.display = 'none';
+
+    var data = [
+      { name: 'Female', value: 16.47 },
+      { name: 'Male', value: 83.02 },
+      { name: 'Non-Binary', value: 0.5 }
+    ];
+
+    var colorrr = d3.scale.ordinal()
+      .range(['#FFB6C1', '#48D1CC', '#8FBC8F']);
+
+    var width = 500;
+    var height = 500;
+    var outerRadius = 200;
+    var innerRadius = 0;
+    var arc = d3.svg.arc()
+      .innerRadius(innerRadius)
+
+    var arc = d3.svg.arc()
+      .outerRadius(outerRadius);
+
+    var pie = d3.layout.pie()
+      .value(function (d) { return d.value; });
+
+    var svg = d3.select("#chart1a")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+
+    var pieArcs = svg.selectAll("g.pie")
+      .data(pie(data))
+      .enter()
+      .append("g")
+      .attr("class", "pie")
+      .attr("transform", "translate(" + (width / 2) + ", " + (height / 2) + ")");
+
+    pieArcs.append("path")
+      .attr("fill", function (d, i) { return colorrr(i); })
+      .attr("d", arc);
+
+    pieArcs.append("text")
+      .attr("transform", function (d) {
+        d.outerRadius = outerRadius;
+        d.innerRadius = innerRadius;
+        return "translate(" + arc.centroid(d) + ")";
+      })
+      .attr("text-anchor", "middle")
+      .text(function (d) { return d.value + "%"; });
+
+    pieArcs.append("text")
+      .attr("transform", function (d) {
+        d.outerRadius = outerRadius + 50;
+        d.innerRadius = outerRadius + 50;
+        return "translate(" + arc.centroid(d) + ")";
+      })
+      .attr("text-anchor", "middle")
+      .text(function (d, i) { return data[i].name; });
+
+    function myClick() {
+      var x = document.getElementById("chart1a");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+      document.getElementById('chartsage').style.display = 'none';
+      document.getElementById('chartsedu').style.display = 'none';
+      document.getElementById('chartsjob').style.display = 'none';
+    }
+
+
+
+    //AGE COMPARED
+
+    //MALE AGE
+    var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+      width = 400 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom;
+
+    var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+    var y = d3.scale.linear().range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(20);
+
+    // add the SVG element
+    var svg = d3.select("#chart2a").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+    // load the data
+    d3.json("data.json", function (error, data) {
+      data.forEach(function (d) {
+        d.Label = d.Label;
+        d.Freq = +d.Freq;
+      });
+
+      // scale the range of the data
+      x.domain(data.map(function (d) { return d.Label; }));
+      y.domain([0, d3.max(data, function (d) { return d.Freq; })]);
+
+      // add axis
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)");
+
+      svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 5)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Number");
+
+      // Add bar chart
+      svg.selectAll("bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "malebar")
+        .attr("x", function (d) { return x(d.Label); })
+        .attr("width", x.rangeBand())
+        .attr("y", function (d) { return y(d.Freq); })
+        .attr("height", function (d) { return height - y(d.Freq); });
+    });
+
+
+
+    //FEMALE AGE
+
+    var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+      width = 400 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom;
+
+    // set the ranges
+    var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+    var y = d3.scale.linear().range([height, 0]);
+
+    // define the axis
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(5);
+
+    // add the SVG element
+    var svgg = d3.select("#chart3a").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+    // load the data
+    d3.json("fdata.json", function (error, data) {
+      data.forEach(function (d) {
+        d.Label = d.Label;
+        d.Freq = +d.Freq;
+      });
+
+      // scale the range of the data
+      x.domain(data.map(function (d) { return d.Label; }));
+      y.domain([0, d3.max(data, function (d) { return d.Freq; })]);
+
+      // add axis
+      svgg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)");
+
+      svgg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 5)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Number");
+
+      // Add bar chart
+      svgg.selectAll("bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "femalebar")
+        .attr("x", function (d) { return x(d.Label); })
+        .attr("width", x.rangeBand())
+        .attr("y", function (d) { return y(d.Freq); })
+        .attr("height", function (d) { return height - y(d.Freq); });
+
+    });
+
+    //NON-BINARY AGE
+    // set the dimensions of the canvas
+    var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+      width = 400 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom;
+
+    // set the ranges
+    var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+    var y = d3.scale.linear().range([height, 0]);
+
+    // define the axis
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(10);
+
+    // add the SVG element
+    var svggg = d3.select("#chart4a").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+    // load the data
+    d3.json("nbdata.json", function (error, data) {
+
+      data.forEach(function (d) {
+        d.Label = d.Label;
+        d.Freq = +d.Freq;
+      });
+
+      // scale the range of the data
+      x.domain(data.map(function (d) { return d.Label; }));
+      y.domain([0, d3.max(data, function (d) { return d.Freq; })]);
+
+      // add axis
+      svggg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+        .style("text-anchor", "end")
+        .attr("dx", "-.8em")
+        .attr("dy", "-.55em")
+        .attr("transform", "rotate(-90)");
+
+      svggg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 5)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Number");
+
+      // Add bar chart
+      svggg.selectAll("bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "nonbbar")
+        .attr("x", function (d) { return x(d.Label); })
+        .attr("width", x.rangeBand())
+        .attr("y", function (d) { return y(d.Freq); })
+        .attr("height", function (d) { return height - y(d.Freq); });
+
+    });
+
+    function myClick1() {
+      var x = document.getElementById("chartsage");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+      document.getElementById('chart1a').style.display = 'none';
+      document.getElementById('chartsedu').style.display = 'none';
+      document.getElementById('chartsjob').style.display = 'none';
+
+    }
+
+
+
+    //POSLOVIIIIIIIIIII
+    //MEN
+
+    var colorr = d3.scale.ordinal()
+      .range(['#FFB6C1', '#ADD8E6', '#8FBC8F', '#FFE4C4',
+        '#A52A2A', '#00FFFF', '#DC143C', '#BDB76B', '#9932CC',
+        '#2F4F4F', '#FFD700', '#800000', '#ADD8E6']);
+
+    var width2 = 1000;
+    var height2 = 500;
+    var outerRadius2 = 200;
+    var innerRadius2 = 100;
+    var arc2 = d3.svg.arc()
+      .innerRadius(innerRadius2)
+
+    var arc2 = d3.svg.arc()
+      .outerRadius(outerRadius2)
+      .innerRadius(innerRadius2);
+
+    var dataa = [
+      { namee: 'Web Developer', value: (821 / 18846) * 100 },
+      { namee: 'Front-end Developer', value: (811 / 18846) * 100 },
+      { namee: 'Back-end Developer', value: (1676 / 18846) * 100 },
+      { namee: 'Full-stack Developer', value: (3099 / 18846) * 100 },
+      { namee: 'Data Analyst', value: (277 / 18846) * 100 },
+      { namee: 'Mobile Developer', value: (720 / 18846) * 100 },
+      { namee: 'Software Engineer', value: (3823 / 18846) * 100 },
+      { namee: 'Software Test Engineer', value: (341 / 18846) * 100 },
+      { namee: 'Software Architect', value: (611 / 18846) * 100 },
+      { namee: 'Development Operations Engineer', value: (227 / 18846) * 100 },
+      { namee: 'Data Engineer', value: (188 / 18846) * 100 },
+      { namee: 'Student', value: (6182 / 18846) * 100 },
+      { namee: 'Unemployed', value: (297 / 18846) * 100 }
+    ];
+
+    var pie2 = d3.layout.pie()
+      .value(function (d) { return d.value; });
+
+    var svg2 = d3.select("#chartMjob")
+      .append("svg")
+      .attr("width", width2)
+      .attr("height", height2);
+
+    var pieArcs2 = svg2.selectAll("g.pie")
+      .data(pie2(dataa))
+      .enter()
+      .append("g")
+      .attr("class", "pie")
+      .attr("transform", "translate(" + (width2 / 3) + ", " + (height2 / 2) + ")");
+
+    pieArcs2.append("path")
+      .attr("fill", function (d, i) { return colorr(i); })
+      .attr("d", arc2);
+
+    //legend
+    var legendG = svg2.selectAll(".legend")
+      .data(pie2(dataa))
+      .enter().append("g")
+      .attr("transform", function (d, i) {
+        return "translate(" + (width2 - 400) + "," + (i * 25 + 50) + ")";
+      })
+      .attr("class", "legend");
+
+    legendG.append("rect") // make a matching color rect
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("fill", function (d, i) {
+        return colorr(i);
+      });
+
+    legendG.append("text") // add the text
+      .text(function (d) {
+        return d.data.namee + " (" + d.value.toFixed(2) + "%)";
+      })
+      .style("font-size", 15)
+      .attr("y", 12)
+      .attr("x", 20);
+
+    function myClickLink4() {
+      var x = document.getElementById("chartsjob");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+      document.getElementById('chart1a').style.display = 'none';
+      document.getElementById('chartsage').style.display = 'none';
+      document.getElementById('chartsedu').style.display = 'none';
+    }
+
+
+    //WOMEN
+
+    var colorr = d3.scale.ordinal()
+      .range(['#FFB6C1', '#ADD8E6', '#8FBC8F', '#FFE4C4',
+        '#A52A2A', '#00FFFF', '#DC143C', '#BDB76B', '#9932CC',
+        '#2F4F4F', '#FFD700', '#800000', '#ADD8E6']);
+
+    var dataa = [
+      { namee: 'Web Developer', value: (204 / 3812) * 100 },
+      { namee: 'Front-end Developer', value: (189 / 3812) * 100 },
+      { namee: 'Back-end Developer', value: (234 / 3812) * 100 },
+      { namee: 'Full-stack Developer', value: (372 / 3812) * 100 },
+      { namee: 'Data Analyst', value: (72 / 3812) * 100 },
+      { namee: 'Mobile Developer', value: (88 / 3812) * 100 },
+      { namee: 'Software Engineer', value: (622 / 3812) * 100 },
+      { namee: 'Software Test Engineer', value: (108 / 3812) * 100 },
+      { namee: 'Software Architect', value: (29 / 3812) * 100 },
+      { namee: 'Development Operations Engineer', value: (19 / 3812) * 100 },
+      { namee: 'Data Engineer', value: (24 / 3812) * 100 },
+      { namee: 'Student', value: (1769 / 3812) * 100 },
+      { namee: 'Unemployed', value: (82 / 3812) * 100 }
+    ];
+
+    var width2 = 1000;
+    var height2 = 500;
+    var outerRadius2 = 200;
+    var innerRadius2 = 100;
+    var arc2 = d3.svg.arc()
+      .innerRadius(innerRadius2)
+
+    var arc2 = d3.svg.arc()
+      .outerRadius(outerRadius2)
+      .innerRadius(innerRadius2);
+
+    var pie2 = d3.layout.pie()
+      .value(function (d) { return d.value; });
+
+    var svg2 = d3.select("#chartFjob")
+      .append("svg")
+      .attr("width", width2)
+      .attr("height", height2);
+
+    var pieArcs2 = svg2.selectAll("g.pie")
+      .data(pie2(dataa))
+      .enter()
+      .append("g")
+      .attr("class", "pie")
+      .attr("transform", "translate(" + (width2 / 3) + ", " + (height2 / 2) + ")");
+
+    pieArcs2.append("path")
+      .attr("fill", function (d, i) { return colorr(i); })
+      .attr("d", arc2);
+
+    var legendG = svg2.selectAll(".legend")  //legend
+      .data(pie2(dataa))
+      .enter().append("g")
+      .attr("transform", function (d, i) {
+        return "translate(" + (width2 - 400) + "," + (i * 25 + 50) + ")";
+      })
+      .attr("class", "legend");
+
+    legendG.append("rect") // make a matching color rect
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("fill", function (d, i) {
+        return colorr(i);
+      });
+
+    legendG.append("text") // add the text
+      .text(function (d) {
+        return d.data.namee + " (" + d.value.toFixed(2) + "%)";
+      })
+      .style("font-size", 15)
+      .attr("y", 12)
+      .attr("x", 20);
+
+    function myClickLink4() {
+      var x = document.getElementById("chartsjob");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+      document.getElementById('chart1a').style.display = 'none';
+      document.getElementById('chartsage').style.display = 'none';
+      document.getElementById('chartsedu').style.display = 'none';
+    }
+
+  </script>
+
+  <script>
+    //EDUCATION
+    //MEN
+    var dataedu = [{ "label": "Some high school", "value": 273 },
+    { "label": "High school graduate", "value": 1142 },
+    { "label": "Some college", "value": 2034 },
+    { "label": "Vacational training (like bootcamp)", "value": 0 },
+    { "label": "College graduate", "value": 9966 },
+    { "label": "Some post graduate work (Masters, PhD)", "value": 2083 },
+    { "label": "Post graduate degree (Masters, PhD)", "value": 4918 }
+    ];
+
+    var data_max = 10000,
+      num_ticks = 10,
+
+      left_margin = 60,
+      right_margin = 60,
+      top_margin = 30,
+      bottom_margin = 0;
+
+    var w = 500,                        //width
+      h = 350,                        //height
+      coloredu = function (id) { return '#FFA07A' };
+
+    var xedu = d3.scale.linear()
+      .domain([0, data_max])
+      .range([0, w - (left_margin + right_margin)]),
+      yedu = d3.scale.ordinal()
+        .domain(d3.range(dataedu.length))
+        .rangeBands([bottom_margin, h - top_margin], .5);
+
+    var chart_top = h - yedu.rangeBand() / 2 - top_margin;
+    var chart_bottom = bottom_margin + yedu.rangeBand() / 2;
+    var chart_left = left_margin;
+    var chart_right = w - right_margin;
+
+    var vis = d3.select("#chartMedu")
+      .append("svg:svg")
+      .attr("width", w)
+      .attr("height", h)
+      .append("svg:g")
+      .attr("id", "barchart")
+      .attr("class", "barchart")
+
+    var rules = vis.selectAll("g.rule")
+      .data(xedu.ticks(num_ticks))
+      .enter()
+      .append("svg:g")
+      .attr("transform", function (d) {
+        return "translate(" + (chart_left + xedu(d)) + ")";
+      });
+
+    rules.append("svg:line")
+      .attr("class", "tick")
+      .attr("y1", chart_top)
+      .attr("y2", chart_top + 4)
+      .attr("stroke", "#939597");
+
+    rules.append("svg:text")
+      .attr("class", "tick_label")
+      .attr("text-anchor", "middle")
+      .attr("yedu", chart_top + 3)
+      .attr("fill", "#939597")
+      .attr("font-size", "0.667em")
+      .text(function (d) {
+        return d;
+      });
+
+    var bbox = vis.selectAll(".tick_label").node().getBBox();
+    vis.selectAll(".tick_label")
+      .attr("transform", function (d) {
+        return "translate(0," + (bbox.height + 325) + ")";
+      });
+
+    var bars = vis.selectAll("g.bar")
+      .data(dataedu)
+      .enter()
+      .append("svg:g")
+      .attr("class", "bar")
+      .attr("transform", function (d, i) {
+        return "translate(0, " + yedu(i) + ")";
+      });
+
+    bars.append("svg:rect")
+      .attr("x", right_margin)
+      .attr("width", function (d) {
+        return (xedu(d.value));
+      })
+      .attr("height", yedu.rangeBand())
+      .attr("fill", coloredu(0))
+      .attr("stroke", coloredu(0));
+
+    //Labels
+    var labels = vis.select("g.bar")
+      .append("svg:text")
+      .attr("class", "label")
+      .attr("x", 0)
+      .attr("text-anchor", "right")
+      .attr("transform", "rotate(270)")
+      .attr("y", 40)
+      .attr("x", -55)
+      .attr("dy", ".71em")
+      .text("Educa tion groups")
+      .style({ "text-anchor": "end", "font-size": "0.667em", "fill": "#939597" });
+
+    var bbox = labels.node().getBBox();
+
+    labels = vis.selectAll("g.bar")
+      .append("svg:text")
+      .attr("class", "value")
+      .attr("fill", "black")
+      .attr("font-size", "0.7em")
+      .attr("x", function (d) {
+        return 65;
+      })
+      .attr("text-anchor", "start")
+      .text(function (d) {
+        return "" + d.value + "%";
+      })
+      .attr("y", function (d) {
+      })
+      .attr("text-anchor", "start")
+      .text(function (d) {
+        return " " + d.label;
+      });
+
+    bbox = labels.node().getBBox();
+    vis.selectAll(".value")
+      .attr("transform", function (d) {
+        return "translate(0, " + (yedu.rangeBand() / 2 + bbox.height / 4) + ")";
+      });
+
+    //Axes
+    vis.append("svg:line")
+      .attr("class", "axes")
+      .attr("x1", chart_left)
+      .attr("x2", chart_left)
+      .attr("y1", chart_bottom)
+      .attr("y2", chart_top)
+      .attr("stroke", "#939597");
+    vis.append("svg:line")
+      .attr("class", "axes")
+      .attr("x1", chart_left)
+      .attr("x2", chart_right + 120)
+      .attr("y1", chart_top)
+      .attr("y2", chart_top)
+      .attr("stroke", "#939597");
+
+
+    //WOMEN
+    var dataedu = [{ "label": "Some high school", "value": 39 },
+    { "label": "High school graduate", "value": 139 },
+    { "label": "Some college", "value": 446 },
+    { "label": "Vacational training (like bootcamp)", "value": 0 },
+    { "label": "College graduate", "value": 1978 },
+    { "label": "Some post graduate work (Masters, PhD)", "value": 386 },
+    { "label": "Post graduate degree (Masters, PhD)", "value": 1061 }
+    ];
+
+    var data_max = 2000,
+      num_ticks = 5,
+
+      left_margin = 60,
+      right_margin = 60,
+      top_margin = 30,
+      bottom_margin = 0;
+
+    var w = 500,                        //width
+      h = 350,                        //height
+      coloredu = function (id) { return '#4589632' };
+
+    var xedu = d3.scale.linear()
+      .domain([0, data_max])
+      .range([0, w - (left_margin + right_margin)]),
+      yedu = d3.scale.ordinal()
+        .domain(d3.range(dataedu.length))
+        .rangeBands([bottom_margin, h - top_margin], .5);
+
+    var chart_top = h - yedu.rangeBand() / 2 - top_margin;
+    var chart_bottom = bottom_margin + yedu.rangeBand() / 2;
+    var chart_left = left_margin;
+    var chart_right = w - right_margin;
+
+    var vis = d3.select("#chartFedu")
+      .append("svg:svg")
+      .attr("width", w)
+      .attr("height", h)
+      .append("svg:g")
+      .attr("id", "barchart")
+      .attr("class", "barchart")
+
+    var rules = vis.selectAll("g.rule")
+      .data(xedu.ticks(num_ticks))
+      .enter()
+      .append("svg:g")
+      .attr("transform", function (d) {
+        return "translate(" + (chart_left + xedu(d)) + ")";
+      });
+
+    rules.append("svg:line")
+      .attr("class", "tick")
+      .attr("y1", chart_top)
+      .attr("y2", chart_top + 4)
+      .attr("stroke", "#939597");
+
+    rules.append("svg:text")
+      .attr("class", "tick_label")
+      .attr("text-anchor", "middle")
+      .attr("yedu", chart_top + 3)
+      .attr("fill", "#939597")
+      .attr("font-size", "0.667em")
+      .text(function (d) {
+        return d;
+      });
+
+    var bbox = vis.selectAll(".tick_label").node().getBBox();
+    vis.selectAll(".tick_label")
+      .attr("transform", function (d) {
+        return "translate(0," + (bbox.height + 325) + ")";
+      });
+
+    var bars = vis.selectAll("g.bar")
+      .data(dataedu)
+      .enter()
+      .append("svg:g")
+      .attr("class", "bar")
+      .attr("transform", function (d, i) {
+        return "translate(0, " + yedu(i) + ")";
+      });
+
+    bars.append("svg:rect")
+      .attr("x", right_margin)
+      .attr("width", function (d) {
+        return (xedu(d.value));
+      })
+      .attr("height", yedu.rangeBand())
+      .attr("fill", coloredu(0))
+      .attr("stroke", coloredu(0));
+
+
+    //Labels
+    var labels = vis.select("g.bar")
+      .append("svg:text")
+      .attr("class", "label")
+      .attr("x", 0)
+      .attr("text-anchor", "right")
+      .attr("transform", "rotate(270)")
+      .attr("y", 40)
+      .attr("x", -55)
+      .attr("dy", ".71em")
+      .text("Educa tion groups")
+      .style({ "text-anchor": "end", "font-size": "0.667em", "fill": "#939597" });
+
+    var bbox = labels.node().getBBox();
+
+    labels = vis.selectAll("g.bar")
+      .append("svg:text")
+      .attr("class", "value")
+      .attr("fill", "black")
+      .attr("font-size", "0.7em")
+      .attr("x", function (d) {
+        return 65;
+      })
+      .attr("text-anchor", "start")
+      .text(function (d) {
+        return "" + d.value + "%";
+      })
+      .attr("y", function (d) {
+      })
+      .attr("text-anchor", "start")
+      .text(function (d) {
+        return " " + d.label;
+      });
+
+    bbox = labels.node().getBBox();
+    vis.selectAll(".value")
+      .attr("transform", function (d) {
+        return "translate(0, " + (yedu.rangeBand() / 2 + bbox.height / 4) + ")";
+      });
+
+    //Axes
+    vis.append("svg:line")
+      .attr("class", "axes")
+      .attr("x1", chart_left)
+      .attr("x2", chart_left)
+      .attr("y1", chart_bottom)
+      .attr("y2", chart_top)
+      .attr("stroke", "#939597");
+    vis.append("svg:line")
+      .attr("class", "axes")
+      .attr("x1", chart_left)
+      .attr("x2", chart_right + 120)
+      .attr("y1", chart_top)
+      .attr("y2", chart_top)
+      .attr("stroke", "#939597");
+
+    function myClickLink3() {
+      var x = document.getElementById("chartsedu");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+      document.getElementById('chart1a').style.display = 'none';
+      document.getElementById('chartsage').style.display = 'none';
+      document.getElementById('chartsjob').style.display = 'none';
+    }
+
+
+  </script>
+</body>
+
+</html>

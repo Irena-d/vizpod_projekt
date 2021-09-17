@@ -1,0 +1,39 @@
+[
+    {
+        "Label": "Under 12",
+        "Freq": 0	
+    },
+    {
+        "Label" : "12-18",
+        "Freq": 5
+    },
+    {
+        "Label" : "18-24",
+        "Freq": 60
+    },
+    {
+        "Label" : "25-34",
+        "Freq": 44
+    },
+    {
+        "Label" : "35-44",
+        "Freq" : 10
+    },
+    {
+        "Label" : "45-54",
+        "Freq" : 0
+    },
+    {
+        "Label" : "55-64",
+        "Freq" : 2
+    },
+    {
+        "Label" : "65-74",
+        "Freq" : 0
+    },
+    {
+        "Label" : "75 or more",
+        "Freq" : 2
+    }
+    ]
+    

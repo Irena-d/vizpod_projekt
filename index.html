@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <title>Hacker Women</title>
+</head>
+
+<body>
+    
+    <header>
+        <div class="page_title">
+            <h1>Hacker Women in Tech <span>data visualization</span></h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <p id="introduction">Women in Tech is with no doubt a minority with so many things all around the world going around empowering women, wage gap and so on. Hence, Women in Tech has been prioritized in this analysis to see if any of the outcome could help that initiative</p>
+    </div>
+
+    <div class="container">
+        <div class="row" id="buttons">
+            <button id="btn" type="button" class="btn btn-info" onclick="window.location.href='drugi.html'">See graphs here</button>
+        </div> 
+    </div>
+    <section id="map-and-text">
+        <div class="container">
+           
+            <div class="row" id="map-and-text-row">
+
+                <h1 id="country_name"></h1>
+
+                <!--MAPA SVIJETA-->
+                <div class="col-lg-8" id="map">
+
+                </div>
+
+                <div class="col-lg-4" id="text">
+                    <h3 class="county-info-title">COUNTRY INFO</h3>
+                    <div class="county-info" id="country" style="font-size:20px;margin-top:40px">Country: </div>
+                    <div class="county-info" id="female" style="font-size:20px;margin-top:40px">Female hackers: </div>
+                    <div class="county-info" id="male" style="font-size:20px;margin-top:40px">Male hackers: </div>
+                    <div class="county-info" id="ratio" style="font-size:20px;margin-top:40px">Female ratio: </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <br>
+    <br>
+    <br>
+    <br>
+   
+
+    <footer>
+        <a href="#" id="link"></a>
+    </footer>
+
+    <script>
+          //Get default countryy 
+        var countries = [];
+        var  filteredCountry = [];
+        var countryy = window.localStorage.getItem("countryy");
+       
+        //Find elements
+        var tooltip = d3.select("div.tooltip");
+        var countryName = document.getElementById("country");
+        var numOfFemales = document.getElementById("female");
+        var numOfMales = document.getElementById("male");
+        var FMratio = document.getElementById("ratio")
+
+        //Color scale
+        var colors = d3.scaleQuantize()
+            .domain([0, 6])
+            .range(["#FFDFAE", "#FDB950", "#FEA720"]);
+
+        var width = window.innerWidth /2,
+            height = window.innerHeight/2,
+            active = d3.select(null);
+
+        var projection = d3.geoMercator()
+            .scale(150)
+            .translate([width / 2, height / 2]);
+
+        //Add zoom to countries
+        var zoom = d3.zoom().on("zoom", zoomed);
+        var path = d3.geoPath().projection(projection);
+
+        //Create SVG element
+        var svg = d3.select("#map").append("svg")
+            .attr("width", width +30)
+            .attr("height", height)
+            .on("click", stopped, true);
+
+        svg.append("rect")
+            .attr("class", "background")
+            .attr("width", width)
+            .attr("height", height)
+            .on("click", reset);
+        var g = svg.append("g");
+        svg.call(zoom);
+
+        filteredByCountry(countryy);
+
+        var femaleCount=0, maleCount=0, fmratio
+        
+        function clicked(d) {
+        
+            if (active.node() === this) {
+                return reset();
+            }
+            active.classed("active", false);
+            active = d3.select(this).classed("active", true);
+
+            //Set information about selected country
+            var name = countries.find(x => x.id == d.id).name;
+            countryName.innerText = "Country: " + name;
+            window.localStorage.setItem("country", name);
+
+            var selectedCountry = filteredCountry.filter(function(item) {
+                return item.CountryNumeric2.includes(name);
+            })
+        
+                    //gender calc
+                   d3.json("kopija.json", function (data) {
+                    data.forEach(function(data){
+                        if(data.CountryNumeric2===name){
+                                if(data.q3Gender=="Male"){
+                                    maleCount++   
+                                }
+                                else {  
+                                    femaleCount++
+                            }
+                       }
+                    })
+                    fmratio=(femaleCount/maleCount)*100     
+            
+           if(maleCount==0){
+            FMratio.innerText = "Female ratio: Cannot calculate with 0!";
+           }
+           else{
+            FMratio.innerText = "Female ratio: " + fmratio.toFixed(2) + "%";
+           }
+            numOfFemales.innerText = "Female: " + femaleCount;
+            numOfMales.innerText = "Male: " + maleCount;
+
+            femaleCount=0;
+            maleCount=0;
+        })
+            //console.log("muških: " +maleCount)
+            //console.log("ženskih: " + femaleCount)
+
+            //Zoom selected country
+            var bounds = path.bounds(d),
+                dx = bounds[1][0] - bounds[0][0],
+                dy = bounds[1][1] - bounds[0][1],
+                x = (bounds[0][0] + bounds[1][0]) / 2,
+                y = (bounds[0][1] + bounds[1][1]) / 2,
+                scale = Math.max(1, Math.min(8, 0.9 / Math.max(dx / width, dy / height))),
+                translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+                reset()
+
+        }
+
+        function getColorNumber(id) {
+            var country = countries.filter(x => x.RespondentID == id)
+            var countCountries = filteredCountry.filter(x =>
+                x.CountryNumeric2.includes(country[0].name)
+            )
+            return countCountries.length;
+        }
+      
+        function filteredByCountry(CountryMap) {
+            d3.json("kopija.json", function(error, dataset) {
+                    filteredCountry = dataset.filter(x => x.CountryNumeric2 == CountryMap);
+                d3.selectAll("path").style("fill", "#FFDFAE");
+                loadMap(CountryMap)
+               
+            });
+        }
+        
+        function reset() {
+            countryy.innerText=" ";
+            active.classed("active", false);
+            active = d3.select(null);
+            resetInfo()
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, d3.zoomIdentity);
+            
+         
+        }
+
+        function resetInfo() {
+            country.innerText = "Country:";
+            numOfFemales.innerText = "Female hackers: ";
+            numOfMales.innerText = "Male hackers: ";
+            FMratio.innerText = "Ratio: ";
+            
+        }
+
+        function loadMap(countryy) {
+            d3.json("country_names.json", function(error, data) {
+                countries = data;
+
+                d3.json("world-50m.json", function(error, world) {
+                    if (error) throw error;
+                    g.selectAll("path").remove()
+                    g.selectAll("path")
+                        .data(topojson.feature(world, world.objects.countries).features)
+                        .enter().append("path")
+                        .attr("d", path)
+                        .attr("class", "feature")
+                        .style("fill", function(d) {
+                            return colors(getColorNumber(d.id));
+                        })
+                        .on("click", clicked)
+                        .on("mouseover", function(d, i) {
+                            return tooltip.style("hidden", false).html(countries.find(x => x.id == d.id).name);
+                        })
+                        .on("mousemove", function(d) {
+                            tooltip.classed("hidden", false)
+                                .style("top", (d3.event.pageY) + "px")
+                                .style("left", (d3.event.pageX + 10) + "px")
+                                .html(countries.find(x => x.id == d.id).name);
+                        })
+                        .on("mouseout", function(d, i) {
+                            tooltip.classed("hidden", true);
+                        });
+
+                    g.append("path")
+                        .datum(topojson.mesh(world, world.objects.countries, function(a, b) {
+                            return a !== b;
+                        }))
+                        .attr("class", "mesh")
+                        .attr("d", path);
+
+                });
+            });
+        }
+
+     
+        function zoomed() {
+            g.style("stroke-width", 1.5 / d3.event.transform.k + "px");
+            g.attr("transform", d3.event.transform);
+        }
+
+        function stopped() {
+            if (d3.event.defaultPrevented) d3.event.stopPropagation();
+        }
+
+
+
+        
+    </script>
+
+</body>
+
+</html>

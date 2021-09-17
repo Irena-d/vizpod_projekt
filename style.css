@@ -1,0 +1,309 @@
+body{
+  background-color: rgba(161, 179, 199, 0.678);
+}
+
+/*naslov*/
+.page_title h1{
+  text-align:center; font-size:50px; text-transform:uppercase; color:#222; letter-spacing:1px;
+  font-family:"Playfair Display", serif; font-weight:400;
+}
+
+.page_title h1 span {
+    margin-top: 5px;
+    font-size:15px; color:#444; word-spacing:1px; font-weight:normal; letter-spacing:2px;
+    text-transform: uppercase; font-family:"Raleway", sans-serif; font-weight:500;
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    grid-template-rows: 27px 0;
+    grid-gap: 20px;
+    align-items: center;
+}
+.page_title h1 span:after,.page_title h1 span:before {
+  content: " ";
+  display: block;
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  height: 5px;
+  background-color:#f8f8f8;
+}
+
+
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color:#f8f8f8;
+    text-align:left;
+    margin-bottom: 20px;
+    height:5px;
+}
+
+#link {
+    font-size:large;
+    margin-left:5%;
+}
+
+#map {
+    overflow-x: auto;
+    height: min-content;
+    
+}
+
+svg {
+    display: block;
+  
+}
+
+.container {
+    width: 78%;
+    padding: 5px;
+   
+}
+
+/*****druga*****/
+
+.dropdown {
+    margin: 10px;
+    margin-left: -15px;
+    
+    
+
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: rgb(97, 108, 141);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: rgb(255, 255, 255);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {background-color: rgb(221, 221, 221);}
+  
+  .dropdown:hover .dropdown-content {display: block;}
+  
+  .dropdown:hover .dropbtn {background-color: rgb(221, 221, 221);}
+
+  .dropdown-toggle{
+      background-color:rgb(112, 191, 219);
+      color:white;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  
+  .dropdown-toggle:hover {
+    background-color: rgba(45, 156, 190, 0.582) !important;
+  }
+  
+  .btnReset:hover {
+    background-color: rgba(0, 0, 0, 0.405) !important;
+  }
+  
+  
+  /*
+  @media screen and (max-width: 1100px) {
+    .column {
+      flex: 100% !important;
+    }
+    .info {
+      margin-bottom: 0px;
+    }
+  
+    #colMap {
+      width: 100% !important;
+    }
+  }
+  
+  .row{
+    margin-left: 0px !important;
+  }
+ 
+  @media screen and (max-width: 1100px) {
+    .row {
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .column {
+      width: 100%;
+    }
+  
+    .dropdown-toggle {
+      width: 180px !important;
+    }
+  
+    .dropdown {
+      position: center;
+    }
+  
+    .dropdown-menu {
+      position: center;
+      width: 180px;
+    }
+  }
+  
+  @media screen and (max-width: 500px) {
+    #divBack {
+      width: 180px !important;
+    }
+  
+    #btnReset {
+      height: 40px !important;
+    }
+  
+    .dropdown {
+      position: center;
+    }
+  
+    .dropdown-menu {
+      position: center;
+      margin-bottom: 0px !important;
+      width: 180px;
+    }
+    .dropdown-toggle {
+      height: 40px !important;
+    }
+  }
+  
+  @media screen and (max-width: 400px) {
+    li {
+      width: 100% !important;
+    }
+    .legenda {
+      width: 100% !important;
+    }
+    h3 {
+      width: 100% !important;
+      position: center;
+    }
+  }*/
+  
+  
+
+  .zoom {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
+  }
+
+  
+  .background {
+    fill: none;
+    pointer-events: all;
+  }
+  
+  .feature {
+    cursor: pointer;
+  }
+  
+  .feature.active {
+    fill: #ee5569 !important;
+  }
+  
+  .feature:hover {
+    fill: #ffa9ae !important;
+  }
+  
+  
+  .mesh {
+    fill: none;
+    stroke: rgb(182, 166, 166);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+
+p{
+  font-size:medium;
+  font-family:'Lucida Sans';
+  font-weight: bold;
+  text-shadow: 01px 0.5px #f3f3f3;
+}
+
+.county-info{
+  font-size:big;
+  font-family:'Lucida Sans';
+  font-weight: bold;
+  text-shadow: 01px 0.5px #f3f3f3;
+}
+
+.county-info-title {
+  font-size:big;
+  font-family:'Lucida Sans';
+  font-weight: bold;
+  font-style: italic;
+  text-decoration:underline;
+  text-shadow: 01px 0.5px #f3f3f3;
+}
+
+#btn{
+  font-size: 20px;
+  background-color:rgb(55, 77, 150);
+  font-family:'Lucida Sans';
+}
+
+#btn:hover{
+  opacity: 0.8;
+}
+
+.info_title {
+  font-size: 25px;
+  font-weight: bold;
+  font-family:'Lucida Sans';
+  text-shadow: 01px 0.5px #f3f3f3;
+  padding-left: 25px;
+  padding-top: 15px;
+}
+
+.pie {
+ font-size: 15px;
+ font-weight: bold;
+}
+
+#chart1a{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chart2a{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chart3a{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chart4a{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chartMedu{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chartFedu{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chartMjob{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+#chartFjob{
+  background-color: rgb(211, 227, 240);
+  width:max-content;
+}
+
+
